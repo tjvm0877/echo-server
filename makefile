@@ -4,7 +4,7 @@ LIB = -pthread
 
 .PHONY: all clean
 
-all: echoserveri echoclient
+all: echoserver echoclient
 
 csapp.o: csapp.c csapp.h
 	$(CC) $(CFLAGS) -c csapp.c
@@ -12,17 +12,17 @@ csapp.o: csapp.c csapp.h
 echo.o: echo.c csapp.h
 	$(CC) $(CFLAGS) -c echo.c
 
-echoserveri.o: echoserveri.c csapp.h
-	$(CC) $(CFLAGS) -c echoserveri.c
+echoserver.o: echoserver.c csapp.h
+	$(CC) $(CFLAGS) -c echoserver.c
 
 echoclient.o: echoclient.c csapp.h
 	$(CC) $(CFLAGS) -c echoclient.c
 
-echoserveri: echoserveri.o echo.o csapp.o
-	$(CC) $(CFLAGS) echoserveri.o echo.o csapp.o -o echoserveri $(LIB)
+echoserver: echoserver.o echo.o csapp.o
+	$(CC) $(CFLAGS) echoserver.o echo.o csapp.o -o echoserver $(LIB)
 
 echoclient: echoclient.o csapp.o
 	$(CC) $(CFLAGS) echoclient.o csapp.o -o echoclient $(LIB)
 
 clean:
-	rm -f *~ *.o echoserveri echoclient core *.tar *.zip
+	rm -f *~ *.o echoserver echoclient core *.tar *.zip
