@@ -1,28 +1,35 @@
-CC = gcc
-CFLAGS = -O2 -Wall -I .
-LIB = -pthread
+CC      := gcc
+CFLAGS  := -O2 -Wall -I .
+LDFLAGS := 
+LDLIBS  := -pthread
+
+COMMON_OBJS := echo.o csapp.o
+
+SRV_MP_OBJ  := echoserver-mp.o
+SRV_MT_OBJ  := echoserver-mt.o
+SRV_MUX_OBJ := echoserver-mux.o
+CLI_OBJ     := echoclient.o
+
+TARGETS := echoserver-mp echoserver-mt echoserver-mux echoclient
 
 .PHONY: all clean
 
-all: echoserver echoclient
+all: $(TARGETS)
 
-csapp.o: csapp.c csapp.h
-	$(CC) $(CFLAGS) -c csapp.c
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
-echo.o: echo.c csapp.h
-	$(CC) $(CFLAGS) -c echo.c
+echoserver-mp: $(SRV_MP_OBJ)  $(COMMON_OBJS)
+	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS) $(LDLIBS)
 
-echoserver.o: echoserver.c csapp.h
-	$(CC) $(CFLAGS) -c echoserver.c
+echoserver-mt: $(SRV_MT_OBJ)  $(COMMON_OBJS)
+	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS) $(LDLIBS)
 
-echoclient.o: echoclient.c csapp.h
-	$(CC) $(CFLAGS) -c echoclient.c
+echoserver-mux: $(SRV_MUX_OBJ) $(COMMON_OBJS)
+	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS) $(LDLIBS)
 
-echoserver: echoserver.o echo.o csapp.o
-	$(CC) $(CFLAGS) echoserver.o echo.o csapp.o -o echoserver $(LIB)
-
-echoclient: echoclient.o csapp.o
-	$(CC) $(CFLAGS) echoclient.o csapp.o -o echoclient $(LIB)
+echoclient: $(CLI_OBJ) csapp.o
+	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS) $(LDLIBS)
 
 clean:
-	rm -f *~ *.o echoserver echoclient core *.tar *.zip
+	rm -f *~ *.o $(TARGETS) core *.tar *.zip
